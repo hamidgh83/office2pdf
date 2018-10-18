@@ -1,0 +1,17 @@
+{
+    "name": "hamidgh83/office2pdf",
+    "description": "This library uses LibreOffice built-in command to convert office documents (e.g. doc, docx, xls, xlsx, ppt, etc.) into PDF format.",
+    "type": "library",
+    "require": {
+        "php": ">=7.0"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Hamid Ghorashi",
+            "email": "h.ghorashi@gmail.com",
+	    "role": "developer"
+        }
+    ],
+    "minimum-stability": "stable"
+}

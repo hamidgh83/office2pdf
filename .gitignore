@@ -2,6 +2,9 @@
 composer.phar
 vendor/
 
+# Lock files
+*.lock
+
 # Local configs
 config/autoload/*.local.php
 
