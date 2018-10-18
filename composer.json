@@ -6,11 +6,16 @@
         "php": ">=7.0"
     },
     "license": "MIT",
+    "autoload": {
+        "psr-4": {
+          "Office2PDF\\": "src/Office2PDF"
+        }
+    },
     "authors": [
         {
             "name": "Hamid Ghorashi",
             "email": "h.ghorashi@gmail.com",
-	    "role": "developer"
+	        "role": "developer"
         }
     ],
     "minimum-stability": "stable"
