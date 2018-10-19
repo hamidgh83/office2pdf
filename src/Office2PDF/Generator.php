@@ -30,9 +30,13 @@ class Generator
      *
      * @param array $fileNames
      */
-    public function __construct(array $fileNames) 
+    public function __construct(array $fileNames = []) 
     {
-        $this->fileNames = $fileNames;
+        $this->checkRequirements();
+
+        if (count($fileNames) > 0) {
+            $this->addFiles($fileNames);
+        }
     }
     
     /**
@@ -49,15 +53,16 @@ class Generator
         }
     
         // Check if java has been installed
-        $output = passthru('java -version && echo java');
-        if($output != 'java') {
+        $output = exec('java -version > NUL && echo yes || echo no');
+
+        if($output == 'no') {
             throw new Exception('There is no Java environment.');
             return false;
         }
         
         // Check if liberoffice has been installed
-        $output = passthru('libreoffice --version && echo libreoffice');
-        if($output != 'libreoffice') {
+        $output = exec('libreoffice --version > NULL && echo yes || echo no');
+        if($output == 'no') {
             throw new Exception('LibreOffice has not been installed.');
             return false;
         }
@@ -71,8 +76,13 @@ class Generator
      * @param string $fileName
      * @return boolean
      */
-    public function isSupported(string $fileName)
+    public function isSupported(string $fileName): bool
     {
+        if (!is_file($fileName)) {
+            throw new Exception('The file ' . $fileName . ' does not exist.');
+            return false;
+        }
+
         $fileInfo   = pathinfo($fileName);
         $fileFormat = $fileInfo['extension'];
         
@@ -107,6 +117,7 @@ class Generator
     {
         if($this->isSupported($fileName)) {
             $this->fileNames[] = $fileName;
+            return;
         }
 
         throw new Exception('Failed to add "' . basename($fileName) . '". The format is not supported.');
