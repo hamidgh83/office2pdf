@@ -53,16 +53,16 @@ class Generator
         }
     
         // Check if java has been installed
-        $output = exec('java -version > NUL && echo yes || echo no');
-
-        if($output == 'no') {
+        exec('java -version > NULL && echo yes || echo no', $output);
+    
+        if($output[0] == 'no') {
             throw new Exception('There is no Java environment.');
             return false;
         }
         
         // Check if liberoffice has been installed
-        $output = exec('libreoffice --version > NULL && echo yes || echo no');
-        if($output == 'no') {
+        exec('libreoffice --version > NULL && echo yes || echo no', $output);
+        if($output[0] == 'no') {
             throw new Exception('LibreOffice has not been installed.');
             return false;
         }
@@ -140,29 +140,33 @@ class Generator
      * Converts given files to PDF and stores them into $outputDirectoy
      *
      * @param string $destination
-     * @return integer Number of converted files 
+     * @return array output stat 
      */
-    public function convert(string $destination): int
+    public function convert(string $destination = ''): array
     {
-        $this->outputDirectory = !is_null($destination) ? $destination : $this->outputDirectory;
-
-        $this->setOutputDir($this->outputDirectory);
+        if(!empty(trim($destination))) {
+            $this->setOutputDir($destination);
+        }
+        
+        if(!$this->outputDirectory) {
+            throw new Exception('No output directory has been defined.');
+        }
 
         $successCount = 0;
+        $failedCount  = 0;
+        $converted    = [];
         
         if (is_dir($this->outputDirectory) === false) {
             throw new Exception('Directory "' . $this->outputDirectory . '" does not exist.');
-            return;
         }
 
         foreach($this->fileNames as $file) {
             if (!file_exists($file)) {
                 throw new Exception('File "' . $file . '" does not exist.');
-                return;
             }
 
-            $fileParts = pathinfo($file);
-            $output    = $this-> outputDirectory . $fileParts['filename'] . '.pdf';
+            $fileParts   = pathinfo($file);
+            $converted[] = $this->outputDirectory . $fileParts['filename'] . '.pdf';
 
             try {
                 $command = 'libreoffice --invisible --convert-to pdf '.$file.' --outdir '.$this->outputDirectory;
@@ -170,10 +174,14 @@ class Generator
                 
                 $successCount++;
             } catch (Exception $e) {
-                return 0;
+                $failedCount ++;
             }
         }
 
-        return $successCount;
+        return [
+            'success'        => $successCount,
+            'failed'         => $failedCount,
+            'convertedFiles' => $converted 
+        ];
     }
 }
