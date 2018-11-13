@@ -1,6 +1,6 @@
 {
     "name": "hamidgh83/office2pdf",
-    "version": "2.0.0",
+    "version": "v2.0.0",
     "description": "This library uses LibreOffice built-in command to convert office documents (e.g. doc, docx, xls, xlsx, ppt, etc.) into PDF format.",
     "type": "library",
     "require": {
